@@ -40,6 +40,7 @@ class ToDoList extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.fetchTasks = this.fetchTasks.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
   }
 
 //Fetch the tasks
@@ -62,7 +63,23 @@ class ToDoList extends React.Component {
       })
   }
 
-
+   deleteTask(id) {
+    if (!id) {
+      return; // if no id is supplied, early return
+    }
+    fetch(`https://altcademy-to-do-list-api.herokuapp.com/tasks/${id}?api_key=169`, {
+      method: "DELETE",
+      mode: "cors",
+    }).then(checkStatus)
+      .then(json)
+      .then((data) => {
+        this.fetchTasks(); // fetch tasks after delete
+      })
+      .catch((error) => {
+        this.setState({ error: error.message });
+        console.log(error);
+      })
+  }
 
   handleChange(event) {
     this.setState({ new_task: event.target.value });
@@ -105,7 +122,8 @@ class ToDoList extends React.Component {
           <div className="col-12">
             <h2 className="mb-3">To Do List</h2>
             {tasks.length > 0 ? tasks.map((task) => {
-               return <Task key={task.id} task={task} />;
+               return <Task key={task.id} task={task} onDelete={this.deleteTask}
+                 />;
             }) : <p>no tasks here</p>}
             <form onSubmit={this.handleSubmit} className="form-inline my-4">
               <input
