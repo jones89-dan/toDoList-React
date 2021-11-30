@@ -8,6 +8,27 @@ const checkStatus = (response) => {
 
 const json = (response) => response.json()
 
+class Task extends React.Component {
+  render () {
+    const { task, onDelete, onComplete } = this.props;
+    const { id, content, completed } = task;
+    return (
+      <div className="row mb-1">
+        <p className="col">{content}</p>
+        <button
+          onClick={() => onDelete(id)}
+        >Delete</button>
+        <input
+          className="d-inline-block mt-2"
+          type="checkbox"
+          onChange={() => onComplete(id, completed)}
+          checked={completed}
+        />
+      </div>
+    )
+  }
+}
+
 class ToDoList extends React.Component {
   constructor(props) {
     super(props);
@@ -34,6 +55,8 @@ class ToDoList extends React.Component {
       })
   }
 
+
+
   handleChange(event) {
     this.setState({ new_task: event.target.value });
   }
@@ -52,7 +75,7 @@ class ToDoList extends React.Component {
           <div className="col-12">
             <h2 className="mb-3">To Do List</h2>
             {tasks.length > 0 ? tasks.map((task) => {
-              return null; // return nothing for now
+               return <Task key={task.id} task={task} />;
             }) : <p>no tasks here</p>}
             <form onSubmit={this.handleSubmit} className="form-inline my-4">
               <input
